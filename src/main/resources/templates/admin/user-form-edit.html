@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Admin - Edit User</title>
+    <style>
+        /* стили из оригинала */
+    </style>
+</head>
+<body>
+<h1>Edit User</h1>
+
+<form th:action="@{/admin/users/{id}(id=${user.id})}" th:object="${user}" method="post">
+    <!-- Скрытое поле ID -->
+    <input type="hidden" th:field="*{id}" />
+
+    <div>
+        <label for="name">Name:</label>
+        <input type="text" id="name" th:field="*{name}" required>
+        <div th:if="${#fields.hasErrors('name')}"
+             th:errors="*{name}"
+             style="color: red;"></div>
+    </div>
+
+    <div>
+        <label for="surname">Surname:</label>
+        <input type="text" id="surname" th:field="*{surname}" required>
+        <div th:if="${#fields.hasErrors('surname')}"
+             th:errors="*{surname}"
+             style="color: red;"></div>
+    </div>
+
+    <div>
+        <label for="email">Email:</label>
+        <input type="email" id="email" th:field="*{email}" required>
+        <div th:if="${#fields.hasErrors('email')}"
+             th:errors="*{email}"
+             style="color: red;"></div>
+    </div>
+
+    <button type="submit">Update User</button>
+</form>
+
+<br>
+<a href="/admin/users">Back to User List</a>
+</body>
+</html>

@@ -1,56 +1,79 @@
 package web.controller;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import web.model.User;
 import web.service.UserService;
 
 @Controller
-public class UserController {
+@RequestMapping("/admin")
+public class AdminController {
 
     private final UserService userService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public AdminController(UserService userService) {
         this.userService = userService;
     }
 
-    // Страница со всеми пользователями (только для admin)
-    @GetMapping("/admin/")
-    public String listAllUsers(Model model) {
+
+    @GetMapping("/users")
+    public String listUsers(Model model) {
         model.addAttribute("users", userService.getAllUsers());
-        return "users_admin"; // Новый шаблон для админа
+        return "admin/user-list";
     }
 
-    // Формы для добавления, редактирования и удаления (только для admin)
-    @GetMapping("/admin/add")
-    public String showAddUserForm(Model model) {
+
+    @GetMapping("/users/new")
+    public String showNewUserForm(Model model) {
         model.addAttribute("user", new User());
-        return "user_form"; // Общий шаблон для форм
+        return "admin/user-form-create";
     }
 
-    @PostMapping("/admin/add")
-    public String addUser(@ModelAttribute("user") User user) {
+    @PostMapping("/users")
+    public String addUser(@ModelAttribute("user") User user, BindingResult result) {
+        if (result.hasErrors()) {
+            return "admin/user-form-create";
+        }
         userService.saveUser(user);
-        return "redirect:/admin/";
+        return "redirect:/admin/users";
     }
 
-    @GetMapping("/admin/edit/{id}")
-    public String showEditUserForm(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("user", userService.getUserById(id));
-        return "user_form";
+
+    @GetMapping("/users/{id}/edit")
+    public String showEditUserForm(@PathVariable Long id, Model model) {
+        User user = userService.getUserById(id);
+        if (user == null) {
+            return "redirect:/admin/users?error=user_not_found";
+        }
+        model.addAttribute("user", user);
+        return "admin/user-form-edit";
     }
 
-    @PostMapping("/admin/edit")
-    public String editUser(@ModelAttribute("user") User user) {
-        userService.updateUser(user);
-        return "redirect:/admin/";
+
+    @PostMapping("/users/{id}")
+    public String updateUser(@PathVariable Long id, @ModelAttribute("user") User user) {
+        User existingUser = userService.getUserById(id);
+        if (existingUser != null) {
+            existingUser.setName(user.getName());
+            existingUser.setSurname(user.getSurname());
+            existingUser.setEmail(user.getEmail());
+            userService.updateUser(existingUser);
+        }
+        return "redirect:/admin/users";
     }
 
-    @PostMapping("/admin/delete/{id}")
-    public String deleteUser(@PathVariable("id") Long id) {
-        userService.deleteUser(id);
-        return "redirect:/admin/";
+
+    @PostMapping("/users/{id}/delete")
+    public String deleteUser(@PathVariable Long id) {
+        try {
+            userService.deleteUser(id);
+        } catch (Exception e) {
+
+        }
+        return "redirect:/admin/users";
     }
 }

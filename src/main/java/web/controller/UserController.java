@@ -1,28 +1,46 @@
 package web.controller;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import web.model.User;
-import web.service.UserService;
+import web.repository.UserRepository;
+
+import java.util.Optional;
+
 
 @Controller
-public class UserControllerPage {
+public class UserController {
 
-    private final UserService userService;
+    private final UserRepository  userRepository;
 
     @Autowired
-    public UserControllerPage(UserService userService) {
-        this.userService = userService;
+    public UserController(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
+
+
     @GetMapping("/user")
-    public String userHomePage(Model model, Authentication authentication) {
-        User loggedInUser = (User) authentication.getPrincipal();
-        model.addAttribute("user", loggedInUser);
-        return "user_page";
+    public String userHomePage(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isEmpty()) {
+            return "redirect:/login?error=user_not_found";
+        }
+
+        model.addAttribute("user", user);
+        return "user/home";
+    }
+
+    // Страница входа
+    @GetMapping("/login")
+    public String loginPage() {
+        return "login";
     }
 }
