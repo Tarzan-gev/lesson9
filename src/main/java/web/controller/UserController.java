@@ -15,13 +15,12 @@ import java.util.Optional;
 @Controller
 public class UserController {
 
-    private final UserRepository  userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
 
 
     @GetMapping("/user")
