@@ -5,22 +5,27 @@
 </head>
 <body>
 <h1>Login</h1>
+
+<!-- Сообщение об ошибке -->
 <div th:if="${param.error}" style="color: red;">
     Invalid username or password.
 </div>
+
+<!-- Сообщение о выходе -->
 <div th:if="${param.logout}" style="color: green;">
     You have been logged out.
 </div>
 
-<form th:action="@{/login-process}" method="post">
+<form th:action="@{/login}" method="post">
     <div>
         <label for="email">Email:</label>
-        <input type="text" id="email" name="email" required>
+        <input type="email" id="email" name="email" required autofocus> <!-- ИЗМЕНЕНО: name="email", type="email" -->
     </div>
     <div>
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
     </div>
+
     <button type="submit">Sign In</button>
 </form>
 </body>

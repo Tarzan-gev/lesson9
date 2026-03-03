@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import jakarta.persistence.Entity;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -49,7 +48,7 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-
+    // Геттеры и сеттеры
     public Long getId() {
         return id;
     }
@@ -87,7 +86,6 @@ public class User implements UserDetails {
         return this.password;
     }
 
-
     public void setPassword(String password) {
         this.password = password;
     }
@@ -96,19 +94,30 @@ public class User implements UserDetails {
         return roles;
     }
 
-     void setRoles(Set<Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 
 
     public void addRole(Role role) {
-        this.roles.add(role);
+        if (role != null && !this.roles.contains(role)) {
+            this.roles.add(role);
+        }
+    }
+
+
+    public void removeRole(Role role) {
+        if (role != null) {
+            this.roles.remove(role);
+        }
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getAuthority()))
+                .map(Role::getAuthority)
+                .filter(Objects::nonNull)  // Фильтруем null-значения
+                .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
 

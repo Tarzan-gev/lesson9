@@ -55,14 +55,11 @@ public class AdminController {
 
 
     @PostMapping("/users/{id}")
-    public String updateUser(@PathVariable Long id, @ModelAttribute("user") User user) {
-        User existingUser = userService.getUserById(id);
-        if (existingUser != null) {
-            existingUser.setName(user.getName());
-            existingUser.setSurname(user.getSurname());
-            existingUser.setEmail(user.getEmail());
-            userService.updateUser(existingUser);
-        }
+    public String updateUser(@PathVariable Long id,
+                             @RequestParam String name,
+                             @RequestParam String surname,
+                             @RequestParam String email) {
+        userService.updateUser(id, name, surname, email); // используем новый метод
         return "redirect:/admin/users";
     }
 

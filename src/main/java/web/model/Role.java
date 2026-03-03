@@ -1,12 +1,10 @@
 package web.model;
 
-
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
-import jakarta.persistence.Entity;
 
 @Entity
 @Table(name = "roles")
@@ -21,24 +19,27 @@ public class Role implements GrantedAuthority {
     private String name;
 
     @ManyToMany(mappedBy = "roles")
-    private Set<User> users;
+    private Set<User> users = new HashSet<>(); // Инициализация коллекции
 
     public Role() {}
 
+
     public Role(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("Role name cannot be null");
+        }
         this.name = name;
     }
 
     @Override
     public String getAuthority() {
-        return "ROLE_" + name;
+        return "ROLE_" + name; // Префикс для Spring Security
     }
 
-
+    // Геттеры и сеттеры
     public Long getId() {
         return id;
     }
-
 
     public void setId(Long id) {
         this.id = id;
@@ -48,7 +49,10 @@ public class Role implements GrantedAuthority {
         return name;
     }
 
-    void setName(String name) {
+    public void setName(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("Role name cannot be null");
+        }
         this.name = name;
     }
 
@@ -56,8 +60,24 @@ public class Role implements GrantedAuthority {
         return users;
     }
 
-    void setUsers(Set<User> users) {
-        this.users = users;
+    public void setUsers(Set<User> users) {
+        this.users = users != null ? users : new HashSet<>();
+    }
+
+
+    public void addUser(User user) {
+        if (user != null && !this.users.contains(user)) {
+            this.users.add(user);
+            user.addRole(this); // Устанавливаем обратную связь
+        }
+    }
+
+
+    public void removeUser(User user) {
+        if (user != null) {
+            this.users.remove(user);
+            user.getRoles().remove(this); // Удаляем обратную связь
+        }
     }
 
     @Override

@@ -1,9 +1,7 @@
 package web.service;
 
-
 import org.springframework.stereotype.Service;
 import web.model.User;
-
 
 import java.util.List;
 import java.util.Optional;
@@ -21,4 +19,7 @@ public interface UserService {
     void deleteUser(Long id);
 
     Optional<User> findByEmail(String email);
+
+
+    void updateUser(Long id, String name, String surname, String email);
 }
