@@ -1,7 +1,52 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Admin - Add User</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        div { margin-bottom: 15px; }
+        label { display: inline-block; width: 100px; font-weight: bold; }
+        input[type="text"], input[type="email"], input[type="password"] {
+            width: 250px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        .role-checkbox {
+            margin-left: 100px;
+            margin-top: 10px;
+        }
+        .role-checkbox div {
+            margin-bottom: 8px;
+        }
+        .role-checkbox input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        button {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover { background-color: #45a049; }
+        a {
+            margin-left: 10px;
+            color: #333;
+            text-decoration: none;
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        a:hover {
+            background-color: #f5f5f5;
+            text-decoration: none;
+        }
+        h1 { color: #333; }
+    </style>
 </head>
 <body>
 <h1>Add New User</h1>
@@ -23,10 +68,23 @@
         <label for="password">Password:</label>
         <input type="password" id="password" th:field="*{password}" required>
     </div>
-    <button type="submit">Add User</button>
-</form>
 
-<br>
-<a href="/admin/users">Back to User List</a>
+    <!-- Добавлен блок выбора ролей -->
+    <div class="role-checkbox">
+        <label>Roles:</label>
+        <div th:each="role : ${allRoles}">
+            <input type="checkbox"
+                   name="roleIds"
+                   th:value="${role.id}"
+                   th:id="'role_' + ${role.id}">
+            <label th:for="'role_' + ${role.id}" th:text="${role.name}" style="width: auto; font-weight: normal;"></label>
+        </div>
+    </div>
+
+    <div style="margin-top: 20px;">
+        <button type="submit">Add User</button>
+        <a href="/admin/users">Cancel</a>
+    </div>
+</form>
 </body>
 </html>

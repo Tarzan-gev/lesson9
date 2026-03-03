@@ -27,7 +27,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/", "/login", "/logout").permitAll()
-                        .requestMatchers("/user").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/user").hasAnyRole("USER", "ADMIN") // доступ для USER и ADMIN
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/static/**", "/css/**", "/js/**", "/images/**").permitAll()
                         .anyRequest().authenticated()

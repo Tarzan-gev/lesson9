@@ -10,9 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import web.model.User;
 import web.repository.UserRepository;
 
-
-
-
 @Controller
 public class UserController {
 
@@ -23,20 +20,18 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-
     @GetMapping("/user")
     public String showUserHomePage(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        User user = userRepository.findByEmailWithRoles(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
         model.addAttribute("user", user);
         return "user/home";
     }
 
-    // Страница входа
     @GetMapping("/login")
     public String loginPage() {
         return "login";

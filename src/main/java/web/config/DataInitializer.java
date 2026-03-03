@@ -61,7 +61,7 @@ public class DataInitializer {
                 System.out.println(" Пользователь user@example.com уже существует");
             }
 
-            // Создаём админа, если его нет
+
             if (userRepository.findByEmail("admin@example.com").isEmpty()) {
                 User admin = new User("Admin", "Admin", "admin@example.com",
                         passwordEncoder.encode("admin"));
