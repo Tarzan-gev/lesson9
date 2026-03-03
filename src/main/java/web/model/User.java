@@ -48,7 +48,7 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    // Геттеры и сеттеры
+
     public Long getId() {
         return id;
     }
@@ -116,7 +116,7 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
                 .map(Role::getAuthority)
-                .filter(Objects::nonNull)  // Фильтруем null-значения
+                .filter(Objects::nonNull)
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }

@@ -59,7 +59,7 @@ public class AdminController {
                              @RequestParam String name,
                              @RequestParam String surname,
                              @RequestParam String email) {
-        userService.updateUser(id, name, surname, email); // используем новый метод
+        userService.updateUser(id, name, surname, email);
         return "redirect:/admin/users";
     }
 

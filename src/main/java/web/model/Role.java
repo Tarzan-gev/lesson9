@@ -19,7 +19,7 @@ public class Role implements GrantedAuthority {
     private String name;
 
     @ManyToMany(mappedBy = "roles")
-    private Set<User> users = new HashSet<>(); // Инициализация коллекции
+    private Set<User> users = new HashSet<>();
 
     public Role() {}
 
@@ -36,7 +36,7 @@ public class Role implements GrantedAuthority {
         return "ROLE_" + name; // Префикс для Spring Security
     }
 
-    // Геттеры и сеттеры
+
     public Long getId() {
         return id;
     }
@@ -68,7 +68,7 @@ public class Role implements GrantedAuthority {
     public void addUser(User user) {
         if (user != null && !this.users.contains(user)) {
             this.users.add(user);
-            user.addRole(this); // Устанавливаем обратную связь
+            user.addRole(this);
         }
     }
 
@@ -76,7 +76,7 @@ public class Role implements GrantedAuthority {
     public void removeUser(User user) {
         if (user != null) {
             this.users.remove(user);
-            user.getRoles().remove(this); // Удаляем обратную связь
+            user.getRoles().remove(this);
         }
     }
 
