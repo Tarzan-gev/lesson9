@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public List<User> getAllUsersWithRoles() {
-        return userRepository.findAllWithRoles();  // Новый метод с ролями
+        return userRepository.findAllWithRoles();
     }
 
     @Override
@@ -52,8 +52,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void updateUser(User user) {
-
-        User existingUser = getUserById(user.getId());
+        User existingUser = getUserByIdWithRoles(user.getId());
 
         existingUser.setName(user.getName());
         existingUser.setSurname(user.getSurname());
@@ -63,6 +62,11 @@ public class UserServiceImpl implements UserService {
                 && !user.getPassword().startsWith("$2a$")) {
             existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
         }
+
+        if (user.getRoles() != null && !user.getRoles().isEmpty()) {
+            existingUser.setRoles(user.getRoles());
+        }
+
         userRepository.save(existingUser);
     }
 
@@ -70,6 +74,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public User getUserByIdWithRoles(Long id) {
+        return userRepository.findByIdWithRoles(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
     }
 
     @Override

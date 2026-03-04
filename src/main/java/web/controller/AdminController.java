@@ -1,7 +1,6 @@
 package web.controller;
 
 
-
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -79,13 +78,14 @@ public class AdminController {
 
     @GetMapping("/users/{id}/edit")
     public String showEditUserForm(@PathVariable Long id, Model model) {
-        User user = userService.getUserById(id);
-        if (user == null) {
+        try {
+            User user = userService.getUserByIdWithRoles(id);
+            model.addAttribute("user", user);
+            model.addAttribute("allRoles", roleRepository.findAll());
+            return "admin/user-form-edit";
+        } catch (EntityNotFoundException e) {
             return "redirect:/admin/users?error=user_not_found";
         }
-        model.addAttribute("user", user);
-        model.addAttribute("allRoles", roleRepository.findAll());
-        return "admin/user-form-edit";
     }
 
     @PostMapping("/users/{id}/update")
