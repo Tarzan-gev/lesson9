@@ -1,5 +1,7 @@
 package web.controller;
 
+
+
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,7 +33,8 @@ public class AdminController {
 
     @GetMapping("/users")
     public String listUsers(Model model) {
-        model.addAttribute("users", userService.getAllUsers());
+        // Используем новый метод для загрузки пользователей с ролями
+        model.addAttribute("users", userService.getAllUsersWithRoles());
         return "admin/user-list";
     }
 
@@ -47,17 +50,24 @@ public class AdminController {
                           BindingResult result,
                           @RequestParam(value = "roleIds", required = false) Set<Long> roleIds,
                           Model model) {
+
         if (result.hasErrors()) {
             model.addAttribute("allRoles", roleRepository.findAll());
             return "admin/user-form-create";
         }
 
-        // Устанавливаем выбранные роли
+        if (userService.findByEmail(user.getEmail()).isPresent()) {
+            model.addAttribute("error", "User with this email already exists!");
+            model.addAttribute("allRoles", roleRepository.findAll());
+            return "admin/user-form-create";
+        }
+
+
         if (roleIds != null && !roleIds.isEmpty()) {
             Set<Role> selectedRoles = new HashSet<>(roleRepository.findAllById(roleIds));
             user.setRoles(selectedRoles);
         } else {
-            // По умолчанию — роль USER
+
             Role userRole = roleRepository.findByName("USER")
                     .orElseThrow(() -> new EntityNotFoundException("Default role USER not found"));
             user.setRoles(Set.of(userRole));
@@ -91,7 +101,6 @@ public class AdminController {
 
         user.setId(id);
 
-        // Устанавливаем выбранные роли
         if (roleIds != null && !roleIds.isEmpty()) {
             Set<Role> selectedRoles = new HashSet<>(roleRepository.findAllById(roleIds));
             user.setRoles(selectedRoles);
@@ -106,7 +115,7 @@ public class AdminController {
         try {
             userService.deleteUser(id);
         } catch (Exception e) {
-            // Логирование ошибки
+
         }
         return "redirect:/admin/users";
     }

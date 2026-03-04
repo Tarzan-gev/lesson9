@@ -46,10 +46,21 @@
             text-decoration: none;
         }
         h1 { color: #333; }
+        .error-message {
+            color: red;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #ffebee;
+            border-radius: 3px;
+            border-left: 4px solid #f44336;
+        }
     </style>
 </head>
 <body>
 <h1>Add New User</h1>
+
+<!-- Добавлен блок для отображения ошибки -->
+<div th:if="${error}" class="error-message" th:text="${error}"></div>
 
 <form th:action="@{/admin/users}" th:object="${user}" method="post">
     <div>
@@ -69,7 +80,7 @@
         <input type="password" id="password" th:field="*{password}" required>
     </div>
 
-    <!-- Добавлен блок выбора ролей -->
+    <!-- Блок выбора ролей -->
     <div class="role-checkbox">
         <label>Roles:</label>
         <div th:each="role : ${allRoles}">

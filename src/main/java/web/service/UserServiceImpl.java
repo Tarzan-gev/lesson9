@@ -21,6 +21,11 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
+    @Override
+    @Transactional(readOnly = true)
+    public List<User> getAllUsersWithRoles() {
+        return userRepository.findAllWithRoles();  // Новый метод с ролями
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -50,17 +55,14 @@ public class UserServiceImpl implements UserService {
 
         User existingUser = getUserById(user.getId());
 
-
         existingUser.setName(user.getName());
         existingUser.setSurname(user.getSurname());
         existingUser.setEmail(user.getEmail());
-
 
         if (user.getPassword() != null && !user.getPassword().isEmpty()
                 && !user.getPassword().startsWith("$2a$")) {
             existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
         }
-
         userRepository.save(existingUser);
     }
 
