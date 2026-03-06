@@ -2,148 +2,86 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin - Edit User</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; }
-        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        h1 { color: #333; border-bottom: 2px solid #4CAF50; padding-bottom: 10px; }
-        div { margin-bottom: 15px; }
-        label { display: inline-block; width: 120px; font-weight: bold; }
-        input[type="text"], input[type="email"], input[type="password"] {
-            width: 250px;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 3px;
-            box-sizing: border-box;
-        }
-        .role-checkbox {
-            margin-left: 120px;
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border-radius: 3px;
-        }
-        .role-checkbox div {
-            margin-bottom: 8px;
-        }
-        .role-checkbox input[type="checkbox"] {
-            margin-right: 8px;
-            transform: scale(1.1);
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-right: 10px;
-        }
-        button:hover { background-color: #45a049; }
-        .cancel-btn {
-            background-color: #f44336;
-        }
-        .cancel-btn:hover { background-color: #da190b; }
-        a {
-            color: #2196F3;
-            text-decoration: none;
-            padding: 8px 15px;
-            border: 1px solid #ddd;
-            border-radius: 3px;
-            display: inline-block;
-        }
-        a:hover {
-            background-color: #f5f5f5;
-            text-decoration: none;
-        }
-        .error {
-            color: red;
-            font-size: 12px;
-            margin-top: 3px;
-            margin-left: 125px;
-        }
-        .error-message {
-            color: red;
-            margin-bottom: 15px;
-            padding: 10px;
-            background-color: #ffebee;
-            border-radius: 3px;
-            border-left: 4px solid #f44336;
-        }
-        .success-message {
-            color: green;
-            margin-bottom: 15px;
-            padding: 10px;
-            background-color: #e8f5e8;
-            border-radius: 3px;
-            border-left: 4px solid #4CAF50;
-        }
-    </style>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-<div class="container">
-    <h1>Edit User</h1>
+<body class="bg-light">
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">Edit User</h2>
+                </div>
+                <div class="card-body">
 
-    <!-- Блок для отображения ошибок -->
-    <div th:if="${param.error}" class="error-message">
-        <span th:text="${param.error}"></span>
-    </div>
+                    <!-- Блок для отображения ошибок -->
+                    <div th:if="${param.error}" class="alert alert-danger" th:text="${param.error}"></div>
 
-    <!-- Блок для отображения успеха -->
-    <div th:if="${param.success}" class="success-message">
-        User updated successfully!
-    </div>
+                    <!-- Блок для отображения успеха -->
+                    <div th:if="${param.success}" class="alert alert-success">
+                        User updated successfully!
+                    </div>
 
-    <form th:action="@{/admin/users/{id}/update(id=${user.id})}" th:object="${user}" method="post">
-        <!-- Скрытое поле ID -->
-        <input type="hidden" th:field="*{id}" />
+                    <form th:action="@{/admin/users/{id}/update(id=${user.id})}" th:object="${user}" method="post">
+                        <!-- Скрытое поле ID -->
+                        <input type="hidden" th:field="*{id}" />
 
-        <div>
-            <label for="name">Name:</label>
-            <input type="text" id="name" th:field="*{name}" required>
-            <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error"></div>
-        </div>
+                        <div class="mb-3">
+                            <label for="name" class="form-label fw-bold">Name:</label>
+                            <input type="text" class="form-control" id="name" th:field="*{name}" required>
+                            <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger small mt-1"></div>
+                        </div>
 
-        <div>
-            <label for="surname">Surname:</label>
-            <input type="text" id="surname" th:field="*{surname}" required>
-            <div th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}" class="error"></div>
-        </div>
+                        <div class="mb-3">
+                            <label for="surname" class="form-label fw-bold">Surname:</label>
+                            <input type="text" class="form-control" id="surname" th:field="*{surname}" required>
+                            <div th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}" class="text-danger small mt-1"></div>
+                        </div>
 
-        <div>
-            <label for="email">Email:</label>
-            <input type="email" id="email" th:field="*{email}" required>
-            <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error"></div>
-        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label fw-bold">Email:</label>
+                            <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                            <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger small mt-1"></div>
+                        </div>
 
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" id="password" th:field="*{password}" placeholder="Leave blank to keep current">
-            <div style="font-size: 12px; color: #666; margin-left: 125px;">Leave blank to keep current password</div>
-        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label fw-bold">Password:</label>
+                            <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="Leave blank to keep current">
+                            <div class="form-text text-muted ms-1">Leave blank to keep current password</div>
+                        </div>
 
-        <!-- Блок выбора ролей -->
-        <div class="role-checkbox">
-            <label style="font-weight: bold;">Roles:</label>
-            <div th:each="role : ${allRoles}">
-                <input type="checkbox"
-                       name="roleIds"
-                       th:value="${role.id}"
-                       th:id="'role_' + ${role.id}"
-                       th:checked="${user.roles.contains(role)}">
-                <label th:for="'role_' + ${role.id}"
-                       th:text="${role.name}"
-                       style="width: auto; font-weight: normal; cursor: pointer;"></label>
+                        <!-- Блок выбора ролей -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Roles:</label>
+                            <div class="border p-3 rounded bg-light">
+                                <div th:each="role : ${allRoles}" class="form-check">
+                                    <input type="checkbox"
+                                           class="form-check-input"
+                                           name="roleIds"
+                                           th:value="${role.id}"
+                                           th:id="'role_' + ${role.id}"
+                                           th:checked="${user.roles.contains(role)}">
+                                    <label class="form-check-label" th:for="'role_' + ${role.id}" th:text="${role.name}"></label>
+                                </div>
+                                <div th:if="${#fields.hasErrors('roles')}" th:errors="*{roles}" class="text-danger small mt-1"></div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary px-4">Update User</button>
+                            <a href="/admin/users" class="btn btn-secondary px-4">Cancel</a>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div th:if="${#fields.hasErrors('roles')}" th:errors="*{roles}" class="error"></div>
         </div>
-
-        <div style="margin-top: 20px; text-align: center;">
-            <button type="submit">Update User</button>
-            <a href="/admin/users" style="margin-left: 10px;">Cancel</a>
-        </div>
-    </form>
+    </div>
 </div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
