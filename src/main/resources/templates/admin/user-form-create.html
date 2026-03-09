@@ -1,74 +1,80 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Admin - Add User</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body class="bg-light">
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow">
-                <div class="card-header bg-success text-white">
-                    <h2 class="mb-0">Add New User</h2>
+<div class="container mt-4">
+    <h1 class="mb-4">Admin panel</h1>
+    <ul class="nav nav-tabs mb-3">
+        <li class="nav-item"><a href="/admin/users" class="nav-link">Users table</a></li>
+        <li class="nav-item"><a href="#" class="nav-link active">New user</a></li>
+    </ul>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Add New User</h5>
+        </div>
+        <div class="card-body">
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+            <form th:action="@{/admin/users}" th:object="${user}" method="post" class="needs-validation" novalidate>
+                <div class="mb-3">
+                    <label for="name" class="form-label fw-bold">First name</label>
+                    <input type="text" class="form-control" id="name" th:field="*{name}" required />
+                    <div class="invalid-feedback">Please enter first name</div>
                 </div>
-                <div class="card-body">
-
-                    <!-- Блок для отображения ошибки -->
-                    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-
-                    <form th:action="@{/admin/users}" th:object="${user}" method="post">
-                        <div class="mb-3">
-                            <label for="name" class="form-label fw-bold">Name:</label>
-                            <input type="text" class="form-control" id="name" th:field="*{name}" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="surname" class="form-label fw-bold">Surname:</label>
-                            <input type="text" class="form-control" id="surname" th:field="*{surname}" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="email" class="form-label fw-bold">Email:</label>
-                            <input type="email" class="form-control" id="email" th:field="*{email}" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="password" class="form-label fw-bold">Password:</label>
-                            <input type="password" class="form-control" id="password" th:field="*{password}" required>
-                        </div>
-
-                        <!-- Блок выбора ролей -->
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">Roles:</label>
-                            <div class="border p-3 rounded bg-light">
-                                <div th:each="role : ${allRoles}" class="form-check">
-                                    <input type="checkbox"
-                                           class="form-check-input"
-                                           name="roleIds"
-                                           th:value="${role.id}"
-                                           th:id="'role_' + ${role.id}">
-                                    <label class="form-check-label" th:for="'role_' + ${role.id}"
-                                           th:text="${role.name}"></label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-between">
-                            <button type="submit" class="btn btn-success px-4">Add User</button>
-                            <a href="/admin/users" class="btn btn-secondary px-4">Cancel</a>
-                        </div>
-                    </form>
+                <div class="mb-3">
+                    <label for="surname" class="form-label fw-bold">Last name</label>
+                    <input type="text" class="form-control" id="surname" th:field="*{surname}" required />
+                    <div class="invalid-feedback">Please enter last name</div>
                 </div>
-            </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label fw-bold">Email</label>
+                    <input type="email" class="form-control" id="email" th:field="*{email}" required />
+                    <div class="invalid-feedback">Please enter valid email</div>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label fw-bold">Password</label>
+                    <input type="password" class="form-control" id="password" th:field="*{password}" required />
+                    <div class="invalid-feedback">Please enter password</div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Role</label>
+                    <select class="form-select" name="roleIds" multiple size="2" required>
+                        <option th:each="role : ${allRoles}" th:value="${role.id}" th:text="${role.name}"></option>
+                    </select>
+                    <div class="invalid-feedback">Please select at least one role</div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <a href="/admin/users" class="btn btn-secondary me-2">Cancel</a>
+                    <button type="submit" class="btn btn-success">Add</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
-<!-- Bootstrap JS (optional for some features) -->
+<script>
+    (() => {
+        'use strict';
+        const forms = document.querySelectorAll('.needs-validation');
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
