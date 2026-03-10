@@ -25,6 +25,9 @@ public class User implements UserDetails {
     @Column(name = "surname", nullable = false)
     private String surname;
 
+    @Column(name ="age")
+    private int  age;
+
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
@@ -41,12 +44,15 @@ public class User implements UserDetails {
 
     public User() {}
 
-    public User(String name, String surname, String email, String password) {
+    public User(String name,int age, String surname, String email, String password) {
         this.name = name;
+        this.age = age;
         this.surname = surname;
         this.email = email;
         this.password = password;
     }
+
+
 
 
     public Long getId() {
@@ -55,6 +61,14 @@ public class User implements UserDetails {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 
     public String getName() {

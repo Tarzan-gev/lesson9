@@ -52,7 +52,7 @@ public class DataInitializer {
 
             // Создаём пользователя, если его нет
             if (userRepository.findByEmail("user@example.com").isEmpty()) {
-                User user = new User("Test", "User", "user@example.com",
+                User user = new User("Test",20, "User", "user@example.com",
                         passwordEncoder.encode("password"));
                 user.setRoles(Set.of(userRole));
                 userRepository.save(user);
@@ -63,7 +63,7 @@ public class DataInitializer {
 
 
             if (userRepository.findByEmail("admin@example.com").isEmpty()) {
-                User admin = new User("Admin", "Admin", "admin@example.com",
+                User admin = new User("Admin", 30, "Admin", "admin@example.com",
                         passwordEncoder.encode("admin"));
                 admin.setRoles(Set.of(adminRole, userRole));
                 userRepository.save(admin);

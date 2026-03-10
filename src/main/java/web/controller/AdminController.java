@@ -32,7 +32,7 @@ public class AdminController {
 
     @GetMapping("/users")
     public String listUsers(Model model) {
-        // Используем новый метод для загрузки пользователей с ролями
+
         model.addAttribute("users", userService.getAllUsersWithRoles());
         return "admin/user-list";
     }
