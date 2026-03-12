@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -42,15 +44,91 @@
             width: 100%;
             font-size: 0.85rem;
         }
+        /* Черная плашка от края до края */
+        .top-info-bar {
+            background-color: #212529;
+            color: white;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            margin-left: -20px;
+            margin-right: -20px;
+            width: calc(100% + 40px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .container-fluid {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+        .btn-outline-light {
+            color: white;
+            border-color: white;
+        }
+        .btn-outline-light:hover {
+            background-color: white;
+            color: #212529;
+        }
+        /* Синяя кнопка Edit */
+        .btn-edit {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .btn-edit:hover {
+            background-color: #0056b3;
+        }
+        /* Красная кнопка Delete */
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+        /* Стиль для ролей - обычный текст без фона */
+        .role-text {
+            display: inline-block;
+            margin-right: 5px;
+            color: #000;
+            font-weight: normal;
+        }
     </style>
 </head>
 <body class="bg-light">
-<div class="container-fluid mt-4" style="margin-bottom: 60px;">
+<div class="container-fluid mt-4" style="margin-bottom: 60px; position: relative;">
+    <!-- Черная плашка на всю ширину с динамическим пользователем -->
+    <div class="top-info-bar">
+        <span>
+            <strong sec:authentication="name">admin@example.com</strong>
+            with roles :
+            <th:block th:each="role, iterStat : ${#authentication.getAuthorities()}">
+                <th:block th:if="${#strings.startsWith(role.getAuthority(), 'ROLE_')}">
+                    <span th:text="${#strings.replace(role.getAuthority(), 'ROLE_', '')}"></span>
+                    <th:block th:if="${!iterStat.last}"> </th:block>
+                </th:block>
+            </th:block>
+        </span>
+        <form th:action="@{/logout}" method="post" class="m-0">
+            <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
+        </form>
+    </div>
+
     <div class="d-flex">
         <!-- Левая боковая панель с Admin и User -->
         <div class="sidebar">
-            <a href="#" class="active">Admin</a>
-            <a href="#">User</a>
+            <a href="/admin/users" class="active">Admin</a>
+            <a href="/user">User</a>
         </div>
 
         <!-- Основной контент -->
@@ -63,9 +141,6 @@
                     <span class="fw-bold me-3">Users table</span>
                     <a href="/admin/users/new" class="text-decoration-none">New User</a>
                 </div>
-                <form th:action="@{/logout}" method="post" class="ms-auto">
-                    <button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
-                </form>
             </div>
 
             <h5 class="mb-2">All users</h5>
@@ -87,6 +162,7 @@
                             </tr>
                             </thead>
                             <tbody>
+                            <!-- ТОЛЬКО ДИНАМИЧЕСКИЕ ПОЛЬЗОВАТЕЛИ ИЗ БД -->
                             <tr th:each="user : ${users}">
                                 <td th:text="${user.id}">2</td>
                                 <td th:text="${user.name}">admin</td>
@@ -94,16 +170,17 @@
                                 <td th:text="${user.age}">35</td>
                                 <td th:text="${user.email}">admin@mail.ru</td>
                                 <td>
-                                    <span th:each="role : ${user.roles}"
-                                          class="badge bg-secondary me-1"
-                                          th:text="${role.name}">ADMIN</span>
+                                    <!-- Роли без серого фона, обычные черные буквы -->
+                                    <span th:each="role, iterStat : ${user.roles}"
+                                          class="role-text"
+                                          th:text="${role.name} + (${!iterStat.last} ? ' ' : '')">ADMIN</span>
                                 </td>
                                 <td>
                                     <a th:href="@{/admin/users/{id}/edit(id=${user.id})}"
-                                       class="btn btn-outline-primary btn-sm">Edit</a>
+                                       class="btn-edit">Edit</a>
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-outline-danger btn-sm"
+                                    <button type="button" class="btn-delete"
                                             data-bs-toggle="modal"
                                             data-bs-target="#deleteModal"
                                             th:data-user-id="${user.id}"
@@ -112,22 +189,6 @@
                                             th:data-user-age="${user.age}"
                                             th:data-user-email="${user.email}"
                                             th:data-user-roles="${user.roles}">Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>user</td>
-                                <td>user</td>
-                                <td>30</td>
-                                <td>user@mail.ru</td>
-                                <td>
-                                    <span class="badge bg-secondary me-1">USER</span>
-                                </td>
-                                <td>
-                                    <a href="#" class="btn btn-outline-primary btn-sm">Edit</a>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-outline-danger btn-sm">Delete</button>
                                 </td>
                             </tr>
                             </tbody>
@@ -150,27 +211,27 @@
             <div class="modal-body">
                 <div class="mb-3">
                     <label class="fw-bold">ID</label>
-                    <div id="modalUserId" class="border p-2 bg-light">2</div>
+                    <div id="modalUserId" class="border p-2 bg-light"></div>
                 </div>
                 <div class="mb-3">
                     <label class="fw-bold">First name</label>
-                    <div id="modalUserFirstName" class="border p-2 bg-light">admin</div>
+                    <div id="modalUserFirstName" class="border p-2 bg-light"></div>
                 </div>
                 <div class="mb-3">
                     <label class="fw-bold">Last name</label>
-                    <div id="modalUserLastName" class="border p-2 bg-light">admin</div>
+                    <div id="modalUserLastName" class="border p-2 bg-light"></div>
                 </div>
                 <div class="mb-3">
                     <label class="fw-bold">Age</label>
-                    <div id="modalUserAge" class="border p-2 bg-light">35</div>
+                    <div id="modalUserAge" class="border p-2 bg-light"></div>
                 </div>
                 <div class="mb-3">
                     <label class="fw-bold">Email</label>
-                    <div id="modalUserEmail" class="border p-2 bg-light">admin@mail.ru</div>
+                    <div id="modalUserEmail" class="border p-2 bg-light"></div>
                 </div>
                 <div class="mb-3">
                     <label class="fw-bold">Role</label>
-                    <div id="modalUserRoles" class="border p-2 bg-light">ADMIN USER</div>
+                    <div id="modalUserRoles" class="border p-2 bg-light"></div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -183,6 +244,10 @@
     </div>
 </div>
 
+<!-- Активация Windows внизу -->
+<div class="activation-bar">
+    Активация Windows. Чтобы активировать Windows, перейдите в раздел "Параметры".
+</div>
 
 <script>
     // Заполнение модального окна данными пользователя

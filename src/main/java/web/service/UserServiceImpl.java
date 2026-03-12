@@ -56,6 +56,7 @@ public class UserServiceImpl implements UserService {
 
         existingUser.setName(user.getName());
         existingUser.setSurname(user.getSurname());
+        existingUser.setAge(user.getAge());  // 👈 ДОБАВЛЕНО!
         existingUser.setEmail(user.getEmail());
 
         if (user.getPassword() != null && !user.getPassword().isEmpty()
@@ -69,7 +70,6 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(existingUser);
     }
-
     @Override
     @Transactional
     public void deleteUser(Long id) {
